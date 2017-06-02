@@ -1,0 +1,5 @@
+C:\Users\Igor\Documents\Visual Studio 2015\Projects\StateMachineCommentsReader\AsyncAwait\bin\Debug\AsyncAwait.exe.config
+C:\Users\Igor\Documents\Visual Studio 2015\Projects\StateMachineCommentsReader\AsyncAwait\bin\Debug\AsyncAwait.exe
+C:\Users\Igor\Documents\Visual Studio 2015\Projects\StateMachineCommentsReader\AsyncAwait\bin\Debug\AsyncAwait.pdb
+C:\Users\Igor\Documents\Visual Studio 2015\Projects\StateMachineCommentsReader\AsyncAwait\obj\Debug\AsyncAwait.exe
+C:\Users\Igor\Documents\Visual Studio 2015\Projects\StateMachineCommentsReader\AsyncAwait\obj\Debug\AsyncAwait.pdb

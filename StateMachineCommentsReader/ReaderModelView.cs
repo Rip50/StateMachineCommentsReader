@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Windows.Threading;
 using WinForms = System.Windows.Forms;
 
 namespace StateMachineCommentsReader
@@ -19,12 +20,12 @@ namespace StateMachineCommentsReader
         public void ChangeExecutionState(bool state)
         {
             ExecutionInProgress = state;
-            CanExecuteChanged?.Invoke(this, new EventArgs());
+            UpdateCanExecute(this, new EventArgs());
         }
 
         private void UpdateCanExecute(object o, EventArgs args)
         {
-            CanExecuteChanged?.Invoke(this, args);
+            App.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)delegate { CanExecuteChanged?.Invoke(o, args); });
         }
 
         public bool CanExecute(object parameter)
@@ -91,7 +92,7 @@ namespace StateMachineCommentsReader
             var dlg = new SaveFileDialog() { AddExtension=true, Filter="Текстовый файл (.txt)|*.txt", FileName=_model.OutputFile };
             if(dlg.ShowDialog() ?? false)
             {
-                _model.OutputFile = dlg.SafeFileName;
+                _model.OutputFile = dlg.FileName;
             }
         }
 
@@ -174,9 +175,9 @@ namespace StateMachineCommentsReader
         public event Action<bool> ExecutionInProgressChanged;
         public event EventHandler Updated;
 
-        private void OnExecutionInProgressChanged(bool state)
+        private void OnExecutionInProgressChanged(object s, GenerationState state)
         {
-            ExecutionInProgressChanged?.Invoke(state);
+            ExecutionInProgressChanged?.Invoke(state == GenerationState.Completed ? false : true);
         }
 
         private void OnUpdate()
@@ -191,14 +192,13 @@ namespace StateMachineCommentsReader
 
         public async void Generate()
         {
-            OnExecutionInProgressChanged(true);
-            await _model.Generate();
-            OnExecutionInProgressChanged(false);
+            Task.Run(()=>_model.Generate());
         }
 
         public ReaderModelView(IReaderModel model)
         {
             _model = model;
+            _model.GenerationStateChanged += OnExecutionInProgressChanged;
             ChangeDirCommand = new ChangeDirCommand(this);
             ChangeOutputFileCommand = new ChangeOutputFileCommand(this);
             GenerateCommand = new GenerateCommand(this);
